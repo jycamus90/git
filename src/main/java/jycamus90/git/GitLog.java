@@ -20,24 +20,9 @@ public class GitLog {
 	private static Map<Integer, String> sourcePath = new HashMap<>();
 	private static Map<Integer, Integer> lineCount = new HashMap<>();
 
-//	private List<String> gitLogCommand;
-//	private List<String> gitCommitLogCommand;	
-
-//	private final static String PrefixPath = "src/main/java/";
-//	private final static String ProjectPath = "/Users/Ku/workspace/joda-time";
-//	private final static String ProjectPath = "/Users/Ku/workspace/jsoup";
-//	private final static String ProjectPath = "/Users/Ku/workspace/gson/gson";
-//	private final static String DBPath = "/Users/Ku/Documents/uci/research/tacoco/joda-time/joda-time.db";
-//	private final static String DBPath = "/Users/Ku/Documents/uci/research/tacoco/jsoup/jsoup2.db";
-//	private final static String DBPath = "/Users/Ku/Documents/uci/research/tacoco/gson/gson.db";
-
 	private static String ProjectPath;
 	private static String DBPath;
 	
-	public GitLog() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -112,7 +97,8 @@ public class GitLog {
 
 	private static List<String> setLineCountCommand(List<String> command, String path){
 		List<String> gitCommand = new ArrayList<>();
-		
+//		path = pathNameProcessing(path);
+
 		gitCommand.add("git");
 		gitCommand.add("blame");
 		gitCommand.add("'" + path + "'");
@@ -144,6 +130,7 @@ public class GitLog {
 	
 	private static List<String> setAuthorHistoryCommand(List<String> command, String path, int index){
 		List<String> gitCommand = new ArrayList<>();
+		path = pathNameProcessing(path);
 
 		//	String command = "git log --follow '" + newPath + "' -L" + i + ":" + newPath + " | grep -E 'commit|Author:|Date:'";
 		gitCommand.add("git");
@@ -163,7 +150,8 @@ public class GitLog {
 	
 	private static List<String> setFileHistoryCommand(List<String> command, String path){
 		List<String> gitCommand = new ArrayList<>();
-
+//		path = pathNameProcessing(path);
+		
 		//String command = "git log --follow -p --name-only --oneline '" + newPath + "' | grep -v '^.\\{7\\}\\s' | uniq";
 		gitCommand.add("git");
 		gitCommand.add("log");
@@ -183,6 +171,15 @@ public class GitLog {
 		
 		return command;
 	}
+	
+	private static String pathNameProcessing(String path){
+		if(path.contains("$")){
+			return path.replace("$", "\\$");
+		}
+		else
+			return path;
+	}
+	
 	
 	public static void getLineCount(String path){
 		ProcessBuilder pb = new ProcessBuilder();
@@ -282,6 +279,7 @@ public class GitLog {
 
 			for(Entry<Integer, String> e: sourcePath.entrySet()){
 				String newPath = e.getValue().replaceFirst("/", "");
+
 				int size = lineCount.get(e.getKey());
 				
 				//git log --follow src/main/java/org/joda/time/format/ISOPeriodFormat.java -L1:src/main/java/org/joda/time/format/ISOPeriodFormat.java | cat
